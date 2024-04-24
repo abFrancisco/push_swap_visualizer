@@ -1,0 +1,22 @@
+[gd_scene load_steps=2 format=3 uid="uid://c0twkld2epj7o"]
+
+[ext_resource type="Script" path="res://push_swap.gd" id="1_0qe3j"]
+
+[node name="PushSwap" type="Node2D" node_paths=PackedStringArray("grid")]
+script = ExtResource("1_0qe3j")
+grid = NodePath("CanvasLayer/ScrollContainer/GridContainer")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GridContainer" type="GridContainer" parent="CanvasLayer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 3
+columns = 3
