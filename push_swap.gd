@@ -15,51 +15,45 @@ var ratio_list : PackedInt32Array = []
 var ratio : int = 10
 
 var operation_log : Array[String] = []
-var all_results : Array[Array] = []
 
 
 func _ready():
-	#run settings for measuring average operations for different runs
-	for i in range(100, 600, 200):
+	for i in range(50, 500, 5):
 		max_elements_list.push_back(i)
-	for i in range(3, 25):
+	for i in range(2, 20):
 		ratio_list.push_back(i)
 	
 	for n1 in max_elements_list:
-		for i in range(10):#repeat every run 10 times
+		for i in range(10):
 			var run_results : Array[PackedInt32Array] = []
 			for n2 in ratio_list:
 					run_results.push_back(run(n1, n2))
-			all_results.push_back(run_results)
-	analyze_results()
-	#fill_grid()
-	#update_display()
+			analyze_results(run_results)
 
 func run(_max_elements : int, _ratio : int) -> PackedInt32Array:
 	randomize()
+	stack_a.clear()
+	stack_b.clear()
+	operation_log.clear()
 	max_elements = _max_elements
 	ratio = _ratio
-	operation_log.clear()
 	elements_pushed = max_elements / ratio
 	fill_stack_a()
 	split_stacks()#pushes a fraction (defined by ratio) of elements to stack b
 	sort_a()#sorts the remaining elemnts in stack a with allowed operations
 	while not stack_b.is_empty():
 		sort_b_into_a()#sorts the remaining from b to a with rotations and pushes
-	#by here should have a sorted stack
 	return PackedInt32Array([_max_elements, _ratio, operation_log.size()])
 
-func analyze_results():
-	for run_results in all_results:
-		var best_move_count : int =  2147483647
-		var best_result : PackedInt32Array = []
-		for run in run_results:
-			if run[2] < best_move_count:
-				best_move_count = run[2]
-				best_result = run
-		print("max elements = %6d | " % best_result[0] + "ratio = %3d | " % best_result[1] + "movements = %6d " % best_result[2])
+func analyze_results(run_results : Array[PackedInt32Array]):
+	var best_move_count : int =  2147483647
+	var best_result : PackedInt32Array = []
+	for run in run_results:
+		if run[2] < best_move_count:
+			best_move_count = run[2]
+			best_result = run
+	print("max elements = %6d | " % best_result[0] + "ratio = %3d | " % best_result[1] + "movements = %6d " % best_result[2] + "real ratio = %6f" % (float(best_result[0]) / float(best_result[1])))
 	#print("max elements = %6d | " % _max_elements + "ratio = %3d | " % _ratio + "movements = %6d " % operation_log.size())
-
 
 #region Display Table, DISABLED TEMPORARILY
 func fill_grid():
@@ -184,9 +178,7 @@ func rrr(repeat : int):
 #endregion
 #region The Brains of the operation and Helpers
 
-func fill_stack_a():
-	stack_a.clear()
-	stack_b.clear()
+func fill_stack_a():# on the real problem this doenst exist, we read values from main argv
 	var numbers : Array = []
 	for i in range(max_elements):
 		numbers.push_back(i)
@@ -199,7 +191,6 @@ func fill_stack_a():
 #	5*3 = 15, stops at 15,		5*2, next loop stops at 10
 func split_stacks():
 	for i in range(1, ratio):#1->3
-		#for j in range(elements_pushed):
 		var indexes : Array = []
 		for k in range(elements_pushed):
 			indexes.push_back(stack_a.find(k + (i - 1) * elements_pushed))
@@ -216,7 +207,6 @@ func calculate_rotations(indexes : Array) -> Array:
 	for i in range(indexes.size() - 1):
 		result.push_back(indexes[i + 1] - indexes[i] - 1)
 	return result
-	#can defenitely be optimized somehow
 
 func sort_a():
 	var indexes : Array = []
