@@ -18,9 +18,9 @@ var operation_log : Array[String] = []
 
 
 func _ready():
-	for i in range(50, 500, 5):
+	for i in range(50, 550, 50):
 		max_elements_list.push_back(i)
-	for i in range(2, 20):
+	for i in range(4, 20):
 		ratio_list.push_back(i)
 	
 	for n1 in max_elements_list:
@@ -186,27 +186,25 @@ func fill_stack_a():# on the real problem this doenst exist, we read values from
 		var random : int = randi_range(0, numbers.size() - 1)
 		stack_a.push_back(numbers.pop_at(random))
 
-#first round, look for firs 10 ranks
-#if it was with ratio=4, first 5 ranks, elements_pushed=5, for > 3 > 2 > 1
-#	5*3 = 15, stops at 15,		5*2, next loop stops at 10
 func split_stacks():
 	for i in range(1, ratio):#1->3
 		var indexes : Array = []
 		for k in range(elements_pushed):
 			indexes.push_back(stack_a.find(k + (i - 1) * elements_pushed))
 		indexes = calculate_rotations(indexes)
+		#1 0 3 2 4
 		for index in indexes:
 			rra(index)#can be optimized by checking stack_b, and using rr, or rrr instead of ra, rra
 			pb(1)
 	#this is very badly optimized, or not at all
 
 func calculate_rotations(indexes : Array) -> Array:
-	var result : Array = []
+	var result1 : Array = []
 	indexes.sort()
-	result.push_back(indexes[0])
+	result1.push_back(indexes[0])
 	for i in range(indexes.size() - 1):
-		result.push_back(indexes[i + 1] - indexes[i] - 1)
-	return result
+		result1.push_back(indexes[i + 1] - indexes[i] - 1)
+	return result1
 
 func sort_a():
 	var indexes : Array = []
@@ -216,6 +214,7 @@ func sort_a():
 	indexes.sort()
 	indexes.reverse()
 	
+	
 	for index in indexes:
 		var i = stack_b.find(index)
 		if i <= stack_b.size() / 2:
@@ -224,6 +223,39 @@ func sort_a():
 		else:
 			rb(stack_b.size() - i)
 			pa(1)
+
+#func sort_a_v2():
+	#var indexes : Array = []
+	#for i in range(stack_a.size()):
+		#indexes.push_back(stack_a[0])
+		#pb(1)
+	#sort_a_v2_helper(indexes)
+	#
+	#for index in indexes:
+		#var i = stack_b.find(index)
+		#if i <= stack_b.size() / 2:
+			#rrb(i)
+			#pa(1)
+		#else:
+			#rb(stack_b.size() - i)
+			#pa(1)
+#
+#func sort_a_v2_helper(indexes : Array):
+	#var temp_stack : Array = []
+	#temp_stack.push_back(indexes.pop_front())#equivalent to push() to temp_stack
+	#temp_stack.push_back(indexes.pop_front())#do it twice to have a min and max
+	#while not indexes.is_empty():
+		#var temp_target : Array = []
+		#temp_target.resize(indexes.size())
+		#temp_target.fill(999999)
+		#for i in range(indexes.size()):
+			#var target = 999999#target is next biggest number, unless its a new max or min
+			#for j in range(temp_stack.size()):
+				#if indexes[i] < temp_stack[j] and :
+					#temp_target[i] = j
+#
+#45 44 46 42 36 41 43 38 48 40 47
+#37 39 49 
 
 func sort_b_into_a():
 	var indexes : Array = []
